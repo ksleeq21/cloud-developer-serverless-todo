@@ -25,11 +25,6 @@ export class BucketAccess {
     }
 
     async deleteTodoImage(deleteTodoImageRequest: DeleteTodoImageRequest) {
-        console.log('deleteTodoImageRequest:', deleteTodoImageRequest)
-        try {
-            await this.s3.deleteObject(deleteTodoImageRequest).promise()
-        } catch (e) {
-            throw new Error(e.message)
-        }
+        await this.s3.deleteObject(deleteTodoImageRequest).promise()
     }
 }

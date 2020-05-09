@@ -4,6 +4,7 @@ import { TodosAccess } from '../dataLayer/todosAccess'
 import { BucketAccess } from '../dataLayer/BucketAccess'
 import { APIGatewayProxyEvent } from 'aws-lambda'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import { getUserId } from '../lambda/utils'
 
 const todosAccess = new TodosAccess()
@@ -50,6 +51,20 @@ export function generateSignedUploadUrl(
   })
 }
 
+export async function updateTodo(
+  event: APIGatewayProxyEvent,
+  todoId: string,
+  updatedTodo: UpdateTodoRequest) {
+
+  const userId = getUserId(event)
+
+  await todosAccess.updateTodo(
+    userId,
+    todoId,
+    updatedTodo
+  )
+}
+
 export async function deleteTodo(event: APIGatewayProxyEvent) {
   const userId = getUserId(event)
   const todoId = event.pathParameters.todoId
@@ -66,13 +81,3 @@ export async function deleteTodo(event: APIGatewayProxyEvent) {
     Key: todoId
   })
 }
-
-
-// export async function getTodo(event: APIGatewayProxyEvent) {
-//   console.log('### event:', event)
-//   console.log('### event.pathParameters:', event.pathParameters)
-//   const todoId = event.pathParameters.todoId
-//   const userId = getUserId(event)
-//
-//   return await todosAccess.getTodo(todoId, userId)
-// }

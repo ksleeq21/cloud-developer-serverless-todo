@@ -2,10 +2,10 @@ import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { DeleteTodoRequest } from '../requests/DeleteTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { TodoItem } from '../models/TodoItem'
 
 const XAWS = AWSXRay.captureAWS(AWS)
-
-import { TodoItem } from '../models/TodoItem'
 
 export class TodosAccess {
 
@@ -52,23 +52,42 @@ export class TodosAccess {
     return todo
   }
 
+  async updateTodo(
+    userId: string,
+    todoId: string,
+    updateTodoRequest: UpdateTodoRequest) {
+    const { name, dueDate, done } = updateTodoRequest
+
+    await this.docClient.update({
+      TableName: this.todosTable,
+      Key: {
+        userId,
+        todoId
+      },
+      UpdateExpression: 'set #name = :name, #dueDate = :dueDate, #done = :done',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+        '#dueDate': 'dueDate',
+        '#done': 'done'
+      },
+      ExpressionAttributeValues: {
+        ':name': name,
+        ':dueDate': dueDate,
+        ':done': done
+      }
+    }).promise()
+  }
+
   async deleteTodo(deleteTodoRequest: DeleteTodoRequest) {
-    try {
-      console.log('deleteTodo deleteTodoRequest:', deleteTodoRequest)
-      await this.docClient.delete({
-        TableName: this.todosTable,
-        Key: deleteTodoRequest
-      }).promise()
-      
-    } catch (e) {
-      throw new Error(e.message)
-    }
+    await this.docClient.delete({
+      TableName: this.todosTable,
+      Key: deleteTodoRequest
+    }).promise()
   }
 }
 
 function createDynamoDBClient() {
   if (process.env.IS_OFFLINE) {
-    console.log('Creating a local DynamoDB instance')
     return new XAWS.DynamoDB.DocumentClient({
       region: 'localhost',
       endpoint: 'http://localhost:8000'

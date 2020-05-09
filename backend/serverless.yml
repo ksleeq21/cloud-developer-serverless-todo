@@ -28,8 +28,9 @@ provider:
       Action:
         - dynamodb:Scan
         - dynamodb:Query
-        - dynamodb:PutItem
         - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: 
         - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
@@ -40,17 +41,8 @@ provider:
         - s3:GetObject
         - s3:DeleteObject
       Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
-    # - Effect: Allow
-    #   Action:
-    #     - secretsmanager:GetSecretValue
-    #   Resource: !Ref Auth0Secret
-    # - Effect: Allow
-    #   Action:
-    #     - kms:Decrypt
-    #   Resource: !GetAtt KMSKey.Arn
-
+    
 functions:
-
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
@@ -68,6 +60,7 @@ functions:
       - http:
           method: post
           path: todos/{todoId}/attachment
+          cors: true
 
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
@@ -76,6 +69,14 @@ functions:
           method: post
           path: todos
           cors: true
+  
+  UpdateTodo:
+    handler: src/lambda/http/updateTodo.handler
+    events:
+      - http:
+          method: patch
+          path: todos/{todoId}
+          cors: true
 
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
@@ -83,19 +84,7 @@ functions:
       - http:
           method: delete
           path: todos/{todoId}
-  
-  # # TODO: Configure this function
-  # UpdateTodo:
-  #   handler: src/lambda/http/updateTodo.handler
-  #   events:
-  #     - http:
-  #         method: patch
-  #         path: todos/{todoId}
-  #
-  # # TODO: Configure this function
-  
-
- 
+          cors: true
 
 resources:
   Resources:
