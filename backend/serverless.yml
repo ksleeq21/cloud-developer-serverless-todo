@@ -5,7 +5,6 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
-  # - serverless-aws-documentation
   - serverless-dynamodb-local
   - serverless-offline
   - serverless-plugin-canary-deployments
