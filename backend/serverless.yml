@@ -24,23 +24,6 @@ provider:
         - codedeploy:*
       Resource:
         - '*'
-    # - Effect: Allow
-    #   Action:
-    #     - dynamodb:Scan
-    #     - dynamodb:Query
-    #     - dynamodb:GetItem
-    #     - dynamodb:PutItem
-    #     - dynamodb:UpdateItem
-    #     - dynamodb:DeleteItem
-    #   Resource: 
-    #     - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-    #     - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_USER_ID_INDEX}
-    # - Effect: Allow
-    #   Action:
-    #     - s3:PutObject
-    #     - s3:GetObject
-    #     - s3:DeleteObject
-    #   Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
     
 functions:
   Auth:
