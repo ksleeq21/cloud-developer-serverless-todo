@@ -5,6 +5,10 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
+  # - serverless-aws-documentation
+  - serverless-dynamodb-local
+  - serverless-offline
+  - serverless-plugin-canary-deployments
 
 provider:
   tracing:
@@ -29,7 +33,7 @@ provider:
         - codedeploy:*
       Resource:
         - '*'
-    
+
 functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
@@ -70,6 +74,9 @@ functions:
           method: post
           path: todos
           cors: true
+          request:
+            schema:
+              application/json: ${file(models/create-todo-request.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -84,6 +91,9 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
+          request:
+            schema:
+              application/json: ${file(models/update-todo-request.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
