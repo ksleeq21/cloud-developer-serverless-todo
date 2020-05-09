@@ -8,7 +8,6 @@ event: APIGatewayProxyEvent
 
     const todoId = event.pathParameters.todoId
     const signedUploadUrl = generateSignedUploadUrl(todoId)
-    console.log('signedUploadUrl:', signedUploadUrl)
 
     return {
         statusCode: 201,
